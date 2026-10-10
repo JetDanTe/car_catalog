@@ -48,7 +48,8 @@ According to the technical specification, the entity contains all required field
 | `GET` | `/cars/{id}` | View one car by ID | `200 OK` |
 | `PATCH` | `/cars/{id}` | Partial update of a car | `200 OK` |
 | `DELETE` | `/cars/{id}` | Delete a car | `204 No Content` |
-| `GET` | `/` | Health check and links to documentation | `200 OK` |
+| `GET` | `/` | Redirect to the bundled frontend | `302 Found` |
+| `GET` | `/health` | Health check and links to documentation | `200 OK` |
 
 ### Filters for `GET /cars/`
 - `brand`: search by brand substring (case-insensitive, for example, `?brand=toyota`)
@@ -94,9 +95,106 @@ uv run car-catalog
 ```
 
 The API and a convenient web interface will be available at:
-- 🌟 **Car catalog web interface**: [http://127.0.0.1:8000/app/](http://127.0.0.1:8000/app/) (or open the file `frontend/index.html` in any browser)
+- 🌟 **Car catalog web interface**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/) (also available at [http://127.0.0.1:8000/app/](http://127.0.0.1:8000/app/), or open the file `frontend/index.html` in any browser)
 - 📖 **Interactive Swagger documentation**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 - 📑 **ReDoc documentation**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
+---
+
+## ☁️ Deploy on Render
+
+This project can be deployed to Render as a **Python Web Service**.
+
+### Important note about the database
+
+The app uses SQLite by default:
+
+```python
+sqlite+aiosqlite:///./cars.db
+```
+
+On Render, the application filesystem is ephemeral, so SQLite data would be lost on redeploys unless you attach a **persistent disk**.
+
+Recommended Render database URL:
+
+```text
+sqlite+aiosqlite:////var/data/cars.db
+```
+
+### Option 1. Blueprint deployment with `render.yaml`
+
+This repository includes a `render.yaml` file. In Render:
+
+1. Push the repository to GitHub.
+2. In Render, choose **New +** → **Blueprint**.
+3. Select this repository.
+4. Review the generated web service and create it.
+
+The blueprint config:
+- installs the project in editable mode so the `frontend/` directory is available at runtime;
+- starts FastAPI with Uvicorn on Render's assigned port;
+- mounts a persistent disk at `/var/data`;
+- sets `DATABASE_URL` to the persistent SQLite database path.
+
+> If your Render account does not allow persistent disks on free instances, choose **Starter** or a higher plan for this service.
+
+### Option 2. Manual web service setup
+
+If you prefer to configure the service in the dashboard manually, use these values:
+
+- **Environment**: `Python`
+- **Build Command**:
+
+  ```bash
+  pip install -e .
+  ```
+
+- **Start Command**:
+
+  ```bash
+  uvicorn car_catalog.main:app --host 0.0.0.0 --port $PORT
+  ```
+
+- **Health Check Path**: `/health`
+
+### Required Render settings
+
+Add a persistent disk:
+
+- **Mount Path**: `/var/data`
+- **Size**: `1 GB` or larger
+
+Set these environment variables:
+
+- `PYTHON_VERSION=3.12.7`
+- `DATABASE_URL=sqlite+aiosqlite:////var/data/cars.db`
+
+### Seed the database after the first deploy
+
+The application creates tables automatically on startup, but it does **not** insert sample data automatically.
+
+After the first successful deploy:
+
+1. Open the service **Shell** in Render.
+2. Run:
+
+```bash
+python -m car_catalog.seed
+```
+
+Then verify:
+
+- `/` opens the frontend;
+- `/health` returns the health payload;
+- `/docs` opens Swagger UI;
+- `/app/` also serves the frontend;
+- `/cars/` returns the seeded catalog.
+
+### Why `pip install -e .` is used
+
+The FastAPI app serves static files from the repository's `frontend/` directory. Installing the project in editable mode keeps the runtime pointed at the checked-out source tree, so `/app/` continues to work correctly on Render.
+
+If you install with `pip install .`, the Python package is copied into the environment and the `frontend/` directory may not be available where the app expects it.
 
 ---
 

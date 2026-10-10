@@ -1,9 +1,11 @@
 // Cozy Auto — Frontend Vanilla JS Application
 
-// Automatically detect API host: if served from same origin (e.g. FastAPI /app), use relative path, otherwise default to localhost:8000
-const API_BASE = (window.location.port === "8000" || window.location.port === "8080")
-  ? "" 
-  : "http://127.0.0.1:8000";
+// Automatically detect API host:
+// - when served by FastAPI/Render, use the current origin;
+// - when opened directly from the filesystem, fall back to local development server.
+const API_BASE = window.location.protocol === "file:"
+  ? "http://127.0.0.1:8000"
+  : window.location.origin;
 
 const STATE = {
   page: 1,
@@ -138,7 +140,7 @@ async function loadCars() {
       <div class="empty-catalog">
         <div class="empty-icon">⚠️</div>
         <div class="empty-title">Не вдалося підключитися до сервера</div>
-        <div class="empty-desc">Переконайтеся, що FastAPI сервер запущено на порту 8000 (<code>uv run car-catalog</code>).</div>
+        <div class="empty-desc">Переконайтеся, що API доступне на поточному домені або локально через <code>uv run car-catalog</code>.</div>
         <button class="btn btn-secondary" onclick="loadCars()">Спробувати знову</button>
       </div>
     `;

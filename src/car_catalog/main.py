@@ -4,6 +4,7 @@ from typing import AsyncGenerator
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from starlette.staticfiles import StaticFiles
 
 from car_catalog.config import settings
@@ -42,9 +43,15 @@ if FRONTEND_DIR.exists():
     app.mount("/app", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
 
 
-@app.get("/", tags=["health"])
-async def root() -> dict[str, str]:
-    """Root health check endpoint returning API information and documentation links."""
+@app.api_route("/", methods=["GET", "HEAD"], include_in_schema=False)
+async def root() -> RedirectResponse:
+    """Redirect the site root to the bundled frontend application."""
+    return RedirectResponse(url="/app/", status_code=302)
+
+
+@app.api_route("/health", methods=["GET", "HEAD"], tags=["health"])
+async def health() -> dict[str, str]:
+    """Health check endpoint returning API information and documentation links."""
     return {
         "message": f"Welcome to {settings.app_name} v{settings.app_version}",
         "docs": "/docs",
