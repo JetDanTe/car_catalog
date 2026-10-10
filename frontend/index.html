@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cozy Auto — Затишний автокаталог</title>
+  <meta name="description" content="Сучасний та затишний каталог автомобілів із фільтрами, пагінацією та детальним переглядом.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <!-- Header -->
+  <header class="navbar">
+    <div class="container nav-content">
+      <div class="brand-group">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9C2.1 11 2 11.5 2 12v4c0 .6.4 1 1 1h2"/>
+            <circle cx="7" cy="17" r="2"/>
+            <path d="M9 17h6"/>
+            <circle cx="17" cy="17" r="2"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="logo-text">Cozy<span>Auto</span></h1>
+          <p class="logo-sub">Каталог автосалону</p>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <button id="btnOpenCreate" class="btn btn-primary">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Додати автомобіль
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-layout">
+    <!-- Quick Stats -->
+    <section class="stats-ribbon">
+      <div class="stat-card">
+        <span class="stat-label">Всього в каталозі</span>
+        <span class="stat-value" id="statTotalCars">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Доступно зараз</span>
+        <span class="stat-value" id="statAvailableCars">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Середня ціна</span>
+        <span class="stat-value" id="statAvgPrice">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Еко-авто (EV/Гібрид)</span>
+        <span class="stat-value" id="statEcoCars">—</span>
+      </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters-card">
+      <div class="filters-header">
+        <div class="filters-title">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+          </svg>
+          <span>Швидкі фільтри</span>
+        </div>
+        <button id="btnResetFilters" class="btn-text">Скинути всі</button>
+      </div>
+
+      <div class="filters-grid">
+        <!-- Search by Brand/Model -->
+        <div class="form-group search-group">
+          <label for="filterBrand">Марка авто</label>
+          <div class="input-icon-wrap">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="filterBrand" placeholder="Наприклад: Toyota, BMW...">
+          </div>
+        </div>
+
+        <!-- Fuel Type Filter -->
+        <div class="form-group">
+          <label for="filterFuel">Тип пального</label>
+          <select id="filterFuel">
+            <option value="">Всі типи пального</option>
+            <option value="бензин">Бензин</option>
+            <option value="дизель">Дизель</option>
+            <option value="електро">Електро</option>
+            <option value="гібрид">Гібрид</option>
+            <option value="газ">Газ / LPG</option>
+          </select>
+        </div>
+
+        <!-- Min Year Filter -->
+        <div class="form-group">
+          <label for="filterMinYear">Рік випуску від</label>
+          <select id="filterMinYear">
+            <option value="">Будь-який рік</option>
+            <option value="2024">Від 2024</option>
+            <option value="2023">Від 2023</option>
+            <option value="2022">Від 2022</option>
+            <option value="2020">Від 2020</option>
+            <option value="2018">Від 2018</option>
+            <option value="2015">Від 2015</option>
+            <option value="2010">Від 2010</option>
+            <option value="2000">Від 2000</option>
+          </select>
+        </div>
+
+        <!-- Items per page -->
+        <div class="form-group">
+          <label for="pageSizeSelect">Показувати по</label>
+          <select id="pageSizeSelect">
+            <option value="6">6 авто</option>
+            <option value="9" selected>9 авто</option>
+            <option value="18">18 авто</option>
+            <option value="36">36 авто</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Results Header -->
+    <div class="results-meta">
+      <span id="resultsCount">Завантаження каталогу...</span>
+      <div class="api-status" id="apiStatusBadge">
+        <span class="status-dot"></span>
+        <span class="status-text">Підключення до API...</span>
+      </div>
+    </div>
+
+    <!-- Cars Grid -->
+    <section id="carsGrid" class="cars-grid" aria-live="polite">
+      <!-- Generated via JS -->
+    </section>
+
+    <!-- Pagination -->
+    <nav class="pagination-bar" id="paginationBar" aria-label="Пагінація">
+      <button id="btnPrevPage" class="btn btn-secondary" disabled>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Назад
+      </button>
+      <div class="page-indicator" id="pageIndicator">Сторінка 1 з 1</div>
+      <button id="btnNextPage" class="btn btn-secondary" disabled>
+        Вперед
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </nav>
+  </main>
+
+  <!-- Create Car Modal -->
+  <dialog id="createModal" class="modal-dialog">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-icon-badge">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Додати автомобіль</h2>
+            <p>Заповніть інформацію для створення нового авто</p>
+          </div>
+        </div>
+        <button type="button" class="btn-close" id="btnCloseCreate">&times;</button>
+      </div>
+
+      <form id="createCarForm" class="modal-form" novalidate>
+        <div class="form-row two-cols">
+          <div class="form-group">
+            <label for="createBrand">Марка *</label>
+            <input type="text" id="createBrand" name="brand" placeholder="Toyota" required>
+          </div>
+          <div class="form-group">
+            <label for="createModel">Модель *</label>
+            <input type="text" id="createModel" name="model" placeholder="Camry" required>
+          </div>
+        </div>
+
+        <div class="form-row two-cols">
+          <div class="form-group">
+            <label for="createDealer">Дилер або виробник *</label>
+            <input type="text" id="createDealer" name="dealer_or_manufacturer" placeholder="Офіційний дилер Київ" required>
+          </div>
+          <div class="form-group">
+            <label for="createVin">VIN-код (17 символів) *</label>
+            <input type="text" id="createVin" name="vin" maxlength="17" placeholder="1HGCR2F83HA123456" required style="text-transform: uppercase;">
+            <small class="field-hint">Без літер I, O, Q</small>
+          </div>
+        </div>
+
+        <div class="form-row three-cols">
+          <div class="form-group">
+            <label for="createBodyType">Кузов *</label>
+            <select id="createBodyType" name="body_type" required>
+              <option value="седан">Седан</option>
+              <option value="кросовер">Кросовер / SUV</option>
+              <option value="хетчбек">Хетчбек</option>
+              <option value="універсал">Універсал</option>
+              <option value="купе">Купе</option>
+              <option value="пікап">Пікап</option>
+              <option value="мінівен">Мінівен</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="createFuelType">Пальне *</label>
+            <select id="createFuelType" name="fuel_type" required>
+              <option value="бензин">Бензин</option>
+              <option value="дизель">Дизель</option>
+              <option value="електро">Електро</option>
+              <option value="гібрид">Гібрид</option>
+              <option value="газ">Газ / LPG</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="createYear">Рік *</label>
+            <input type="number" id="createYear" name="year" min="1886" max="2030" value="2023" required>
+          </div>
+        </div>
+
+        <div class="form-row three-cols">
+          <div class="form-group">
+            <label for="createPrice">Ціна ($) *</label>
+            <input type="number" id="createPrice" name="price" min="1" step="50" placeholder="28500" required>
+          </div>
+          <div class="form-group">
+            <label for="createCapacity">Двигун (л)</label>
+            <input type="number" id="createCapacity" name="engine_capacity" step="0.1" min="0.1" placeholder="2.5">
+          </div>
+          <div class="form-group">
+            <label for="createPower">Потужність (к.с.)</label>
+            <input type="number" id="createPower" name="engine_power" min="1" placeholder="203">
+          </div>
+        </div>
+
+        <div class="form-row two-cols">
+          <div class="form-group">
+            <label for="createRating">Оцінка (0.0 - 5.0)</label>
+            <input type="number" id="createRating" name="rating" step="0.1" min="0" max="5.0" placeholder="4.8">
+          </div>
+          <div class="form-group toggle-group">
+            <label for="createAvailable">Наявність</label>
+            <label class="switch">
+              <input type="checkbox" id="createAvailable" name="is_available" checked>
+              <span class="slider"></span>
+              <span class="toggle-label" id="createAvailableLabel">В наявності для продажу</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="createFeatures">Комплектація / опції (через кому)</label>
+          <input type="text" id="createFeatures" placeholder="шкіряний салон, панорама, автопілот, Apple CarPlay">
+        </div>
+
+        <div class="form-group">
+          <label for="createDescription">Короткий опис</label>
+          <textarea id="createDescription" name="description" rows="2" placeholder="Опишіть стан, особливості або комплектацію..."></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btnCancelCreate">Скасувати</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitCreate">Зберегти автомобіль</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Edit Car Modal -->
+  <dialog id="editModal" class="modal-dialog">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-icon-badge badge-edit">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Редагувати автомобіль</h2>
+            <p id="editSubtitle">Оновлення характеристик</p>
+          </div>
+        </div>
+        <button type="button" class="btn-close" id="btnCloseEdit">&times;</button>
+      </div>
+
+      <form id="editCarForm" class="modal-form" novalidate>
+        <input type="hidden" id="editCarId">
+
+        <div class="form-row two-cols">
+          <div class="form-group">
+            <label for="editBrand">Марка</label>
+            <input type="text" id="editBrand" name="brand" required>
+          </div>
+          <div class="form-group">
+            <label for="editModel">Модель</label>
+            <input type="text" id="editModel" name="model" required>
+          </div>
+        </div>
+
+        <div class="form-row two-cols">
+          <div class="form-group">
+            <label for="editDealer">Дилер або виробник</label>
+            <input type="text" id="editDealer" name="dealer_or_manufacturer" required>
+          </div>
+          <div class="form-group">
+            <label for="editVin">VIN-код</label>
+            <input type="text" id="editVin" name="vin" maxlength="17" required style="text-transform: uppercase;">
+          </div>
+        </div>
+
+        <div class="form-row three-cols">
+          <div class="form-group">
+            <label for="editBodyType">Кузов</label>
+            <select id="editBodyType" name="body_type">
+              <option value="седан">Седан</option>
+              <option value="кросовер">Кросовер / SUV</option>
+              <option value="хетчбек">Хетчбек</option>
+              <option value="універсал">Універсал</option>
+              <option value="купе">Купе</option>
+              <option value="пікап">Пікап</option>
+              <option value="мінівен">Мінівен</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editFuelType">Пальне</label>
+            <select id="editFuelType" name="fuel_type">
+              <option value="бензин">Бензин</option>
+              <option value="дизель">Дизель</option>
+              <option value="електро">Електро</option>
+              <option value="гібрид">Гібрид</option>
+              <option value="газ">Газ / LPG</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editYear">Рік</label>
+            <input type="number" id="editYear" name="year" min="1886" max="2030">
+          </div>
+        </div>
+
+        <div class="form-row three-cols">
+          <div class="form-group">
+            <label for="editPrice">Ціна ($)</label>
+            <input type="number" id="editPrice" name="price" min="1" step="50" required>
+          </div>
+          <div class="form-group">
+            <label for="editCapacity">Двигун (л)</label>
+            <input type="number" id="editCapacity" name="engine_capacity" step="0.1" min="0.1">
+          </div>
+          <div class="form-group">
+            <label for="editPower">Потужність (к.с.)</label>
+            <input type="number" id="editPower" name="engine_power" min="1">
+          </div>
+        </div>
+
+        <div class="form-row two-cols">
+          <div class="form-group">
+            <label for="editRating">Оцінка (0.0 - 5.0)</label>
+            <input type="number" id="editRating" name="rating" step="0.1" min="0" max="5.0">
+          </div>
+          <div class="form-group toggle-group">
+            <label for="editAvailable">Наявність</label>
+            <label class="switch">
+              <input type="checkbox" id="editAvailable" name="is_available">
+              <span class="slider"></span>
+              <span class="toggle-label" id="editAvailableLabel">В наявності</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="editFeatures">Комплектація / опції (через кому)</label>
+          <input type="text" id="editFeatures">
+        </div>
+
+        <div class="form-group">
+          <label for="editDescription">Опис</label>
+          <textarea id="editDescription" name="description" rows="2"></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btnCancelEdit">Скасувати</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitEdit">Оновити дані</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Delete Confirmation Modal -->
+  <dialog id="deleteModal" class="modal-dialog">
+    <div class="modal-card modal-delete-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-icon-badge badge-danger">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </div>
+          <div>
+            <h2>Видалити автомобіль?</h2>
+            <p id="deleteCarSummary">Цю дію неможливо скасувати.</p>
+          </div>
+        </div>
+        <button type="button" class="btn-close" id="btnCloseDelete">&times;</button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btnCancelDelete">Скасувати</button>
+        <button type="button" class="btn btn-danger" id="btnConfirmDelete">Видалити назавжди</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container" aria-live="assertive"></div>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <p>© 2026 CozyAuto • Швидкий та елегантний каталог автомобілів</p>
+      <div class="footer-links">
+        <a href="/docs" target="_blank" rel="noopener">Swagger API Docs</a>
+        <a href="/redoc" target="_blank" rel="noopener">ReDoc</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
